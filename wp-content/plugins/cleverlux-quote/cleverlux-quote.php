@@ -9,16 +9,19 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+        exit;
 }
 
-require_once __DIR__ . '/includes/class-plugin.php';
+// Safe composer autoload
 if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
-	require_once __DIR__ . '/vendor/autoload.php';
+        require_once __DIR__ . '/vendor/autoload.php';
 }
+// Fallback direct include so activation never fatal-errors
+require_once __DIR__ . '/includes/class-plugin.php';
+
 if ( class_exists( 'CleverLux\\Quote\\Plugin' ) ) {
-	register_activation_hook( __FILE__, array( 'CleverLux\\Quote\\Plugin', 'activate' ) );
-	add_action( 'plugins_loaded', array( 'CleverLux\\Quote\\Plugin', 'instance' ) );
+        register_activation_hook( __FILE__, [ 'CleverLux\\Quote\\Plugin', 'activate' ] );
+        add_action( 'plugins_loaded', [ 'CleverLux\\Quote\\Plugin', 'instance' ] );
 }
 
 add_action(

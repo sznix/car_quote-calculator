@@ -54,31 +54,61 @@ class Settings {
 
 	public static function seed_defaults() {
 		if ( false === get_option( 'cleverlux_q_settings' ) ) {
-			$defaults = array(
-				'price_matrix'   => array(
-					'small'  => array(
-						'1h' => 100,
-						'2h' => 180,
-					),
-					'medium' => array(
-						'1h' => 150,
-						'2h' => 250,
-					),
-					'large'  => array(
-						'1h' => 200,
-						'2h' => 320,
-					),
-				),
-				'addons'         => array(
-					array(
-						'name' => 'Fragile handling',
-						'fee'  => 30,
-					),
-					array(
-						'name' => 'Extra mover',
-						'fee'  => 50,
-					),
-				),
+                        $defaults = array(
+                                'price_matrix'   => array(
+                                        'sedan'     => array(
+                                                'silver'   => 109,
+                                                'gold'     => 189,
+                                                'platinum' => 299,
+                                        ),
+                                        'sports'    => array(
+                                                'silver'   => 129,
+                                                'gold'     => 219,
+                                                'platinum' => 329,
+                                        ),
+                                        'small_suv' => array(
+                                                'silver'   => 129,
+                                                'gold'     => 219,
+                                                'platinum' => 329,
+                                        ),
+                                        'large_suv' => array(
+                                                'silver'   => 149,
+                                                'gold'     => 249,
+                                                'platinum' => 369,
+                                        ),
+                                        'full_van'  => array(
+                                                'silver'   => 169,
+                                                'gold'     => 279,
+                                                'platinum' => 399,
+                                        ),
+                                        'boat'      => array(
+                                                'silver'   => 219,
+                                                'gold'     => 339,
+                                                'platinum' => 499,
+                                        ),
+                                ),
+                                'addons'         => array(
+                                        array(
+                                                'name' => 'Pet-hair removal',
+                                                'fee'  => 25,
+                                        ),
+                                        array(
+                                                'name' => 'Head-lamp restore',
+                                                'fee'  => 35,
+                                        ),
+                                        array(
+                                                'name' => 'Ceramic spray wax',
+                                                'fee'  => 45,
+                                        ),
+                                        array(
+                                                'name' => 'Ozone deodoriser',
+                                                'fee'  => 35,
+                                        ),
+                                        array(
+                                                'name' => 'Engine bay wipe-down',
+                                                'fee'  => 30,
+                                        ),
+                                ),
 				'free_miles'     => 20,
 				'mileage_rate'   => 1.5,
 				'buffer_minutes' => 45,
