@@ -1,0 +1,36 @@
+:root {
+  --color-navy-900: #0A1A2F;
+  --color-navy-600: #12365C;
+  --color-gold-500: #D8C28A;
+  --color-gold-300: #E8D8B4;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.cleverlux-quote {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-gold-500) var(--color-navy-900);
+}
+
+.cleverlux-quote::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.cleverlux-quote::-webkit-scrollbar-track {
+  background: var(--color-navy-900);
+}
+
+.cleverlux-quote::-webkit-scrollbar-thumb {
+  background: var(--color-gold-500);
+  border-radius: 4px;
+}
+
+.cleverlux-quote::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-300);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-navy-900: #12365C;
+  }
+}

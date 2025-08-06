@@ -1,0 +1,37 @@
+[
+  { "model": "Toyota Camry",        "size": "sedan" },
+  { "model": "Honda Accord",        "size": "sedan" },
+  { "model": "Tesla Model S",       "size": "sedan" },
+  { "model": "Hyundai Elantra",     "size": "sedan" },
+  { "model": "Nissan Altima",       "size": "sedan" },
+
+  { "model": "Chevrolet Corvette",  "size": "sports" },
+  { "model": "Mazda MX-5 Miata",    "size": "sports" },
+  { "model": "Porsche 911",         "size": "sports" },
+  { "model": "Ford Mustang",        "size": "sports" },
+  { "model": "BMW M4",              "size": "sports" },
+
+  { "model": "Honda CR-V",          "size": "small_suv" },
+  { "model": "Toyota RAV4",         "size": "small_suv" },
+  { "model": "Subaru Forester",     "size": "small_suv" },
+  { "model": "Mazda CX-5",          "size": "small_suv" },
+  { "model": "Hyundai Tucson",      "size": "small_suv" },
+
+  { "model": "Chevrolet Tahoe",     "size": "large_suv" },
+  { "model": "Ford Expedition",     "size": "large_suv" },
+  { "model": "GMC Yukon XL",        "size": "large_suv" },
+  { "model": "Toyota Sequoia",      "size": "large_suv" },
+  { "model": "Nissan Armada",       "size": "large_suv" },
+
+  { "model": "Mercedes Sprinter",   "size": "full_van" },
+  { "model": "Ford Transit",        "size": "full_van" },
+  { "model": "Ram ProMaster",       "size": "full_van" },
+  { "model": "Chevrolet Express",   "size": "full_van" },
+  { "model": "Nissan NV3500",       "size": "full_van" },
+
+  { "model": "Bayliner Element E16","size": "boat" },
+  { "model": "Yamaha AR195",        "size": "boat" },
+  { "model": "Boston Whaler 170",   "size": "boat" },
+  { "model": "MasterCraft NXT20",   "size": "boat" },
+  { "model": "Tracker Pro Team 175","size": "boat" }
+]

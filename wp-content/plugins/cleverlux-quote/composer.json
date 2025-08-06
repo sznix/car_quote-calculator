@@ -1,0 +1,10 @@
+{
+    "name": "cleverlux/quote",
+    "description": "CleverLux Quote plugin",
+    "type": "wordpress-plugin",
+    "autoload": {
+        "psr-4": {
+            "CleverLux\\Quote\\": "includes/"
+        }
+    }
+}
