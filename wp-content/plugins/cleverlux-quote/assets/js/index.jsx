@@ -112,6 +112,11 @@ function App() {
 	);
 }
 
-createRoot( document.getElementById( 'cleverlux-root' ) ).render( <App /> );
+// Mount the app on all containers to support multiple shortcodes on a page.
+const containers = document.querySelectorAll( '.cleverlux-quote' );
+containers.forEach( ( el ) => {
+	const root = createRoot( el );
+	root.render( <App /> );
+} );
 
 export default App;

@@ -41,27 +41,58 @@ class Assets {
 	 * Register script and style.
 	 */
 	public function register() {
-		$dir_url  = plugin_dir_url( __DIR__ );
-		$dir_path = plugin_dir_path( __DIR__ );
+		// Resolve paths/URLs from the plugin root, not the includes directory.
+		$plugin_root      = dirname( __DIR__ );
+		$plugin_root_file = $plugin_root . '/cleverlux-quote.php';
+		$plugin_url       = plugin_dir_url( $plugin_root_file );
+		$plugin_path      = trailingslashit( $plugin_root );
 
-		$asset_file = $dir_path . 'assets/build/index.asset.php';
+		// Prefer @wordpress/scripts default output in build/; fall back to legacy assets/build/.
+		$build_dir_candidates = array(
+			array(
+				'path' => $plugin_path . 'build/',
+				'url'  => $plugin_url . 'build/',
+			),
+			array(
+				'path' => $plugin_path . 'assets/build/',
+				'url'  => $plugin_url . 'assets/build/',
+			),
+		);
+
+		$build_path = null;
+		$build_url  = null;
+		foreach ( $build_dir_candidates as $candidate ) {
+			if ( file_exists( $candidate['path'] . 'index.js' ) && file_exists( $candidate['path'] . 'index.asset.php' ) ) {
+				$build_path = $candidate['path'];
+				$build_url  = $candidate['url'];
+				break;
+			}
+		}
+
+		// As a last resort, still allow registering even if missing, to avoid fatals in non-built environments.
+		if ( ! $build_path ) {
+			$build_path = $plugin_path . 'build/';
+			$build_url  = $plugin_url . 'build/';
+		}
+
+		$asset_file = $build_path . 'index.asset.php';
 		$asset      = file_exists( $asset_file ) ? require $asset_file : array(
 			'dependencies' => array( 'wp-element', 'wp-i18n' ),
-			'version'      => filemtime( $dir_path . 'assets/build/index.js' ),
+			'version'      => file_exists( $build_path . 'index.js' ) ? filemtime( $build_path . 'index.js' ) : null,
 		);
 
 		wp_register_script(
 			'cleverlux-quote',
-			$dir_url . 'assets/build/index.js',
+			$build_url . 'index.js',
 			$asset['dependencies'],
 			$asset['version'],
 			true
 		);
 
-		$css_file = $dir_path . 'assets/css/cleverlux-ui.css';
+		$css_file = $plugin_path . 'assets/css/cleverlux-ui.css';
 		wp_register_style(
 			'cleverlux-ui',
-			$dir_url . 'assets/css/cleverlux-ui.css',
+			$plugin_url . 'assets/css/cleverlux-ui.css',
 			array(),
 			file_exists( $css_file ) ? filemtime( $css_file ) : null
 		);
@@ -80,7 +111,10 @@ class Assets {
 		}
 		wp_enqueue_script( 'cleverlux-quote' );
 		wp_enqueue_style( 'cleverlux-ui' );
-		add_action( 'wp_head', array( $this, 'theme_color_meta' ) );
+		// Avoid adding duplicate meta tags if the shortcode is rendered multiple times.
+		if ( ! has_action( 'wp_head', array( $this, 'theme_color_meta' ) ) ) {
+			add_action( 'wp_head', array( $this, 'theme_color_meta' ) );
+		}
 	}
 
 	/**

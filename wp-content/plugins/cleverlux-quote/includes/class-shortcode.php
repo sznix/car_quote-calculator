@@ -44,6 +44,7 @@ class Shortcode {
 	 */
 	public function render() {
 		Assets::instance()->enqueue();
-		return '<div id="cleverlux-root" class="cleverlux-quote"></div>';
+		// Use a class instead of a duplicate id to support multiple instances.
+		return '<div class="cleverlux-quote"></div>';
 	}
 }
