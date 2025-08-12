@@ -11,7 +11,7 @@ const stepsPlaceholder = [
 ];
 
 function App() {
-	const [ currentStep ] = useState( 0 );
+	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ selectedSize, setSelectedSize ] = useState( null );
 	const [ modalOpen, setModalOpen ] = useState( false );
 	const [ lookupInput, setLookupInput ] = useState( '' );

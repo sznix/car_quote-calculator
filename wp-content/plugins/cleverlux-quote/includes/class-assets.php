@@ -74,10 +74,25 @@ class Assets {
 		if ( ! is_singular() ) {
 			return;
 		}
+		
 		$post = get_post();
-		if ( ! $post || ! has_shortcode( $post->post_content, 'cleverlux_quote' ) ) {
+		if ( ! $post ) {
 			return;
 		}
+		
+		// Cache the shortcode check result to improve performance
+		$cache_key = 'cleverlux_quote_shortcode_' . $post->ID;
+		$has_shortcode = wp_cache_get( $cache_key );
+		
+		if ( false === $has_shortcode ) {
+			$has_shortcode = has_shortcode( $post->post_content, 'cleverlux_quote' );
+			wp_cache_set( $cache_key, $has_shortcode, '', 3600 ); // Cache for 1 hour
+		}
+		
+		if ( ! $has_shortcode ) {
+			return;
+		}
+		
 		wp_enqueue_script( 'cleverlux-quote' );
 		wp_enqueue_style( 'cleverlux-ui' );
 		add_action( 'wp_head', array( $this, 'theme_color_meta' ) );
@@ -88,7 +103,7 @@ class Assets {
 	 */
 	public function theme_color_meta() {
 		echo '<meta name="theme-color" content="#F5E5D0">' . "\n"; // Gold (default)
-		echo '<meta name="theme-color" content="#12365C" media="(prefers-color-scheme: light)">' . "\n"; // Navy-600
-		echo '<meta name="theme-color" content="#0A1A2F" media="(prefers-color-scheme: dark)">' . "\n"; // Navy-900
+		echo '<meta name="theme-color" content="#12365C" media="(prefers-color-scheme: light)">' . "\n"; // Navy-600 for light mode
+		echo '<meta name="theme-color" content="#0A1A2F" media="(prefers-color-scheme: dark)">' . "\n"; // Navy-900 for dark mode
 	}
 }

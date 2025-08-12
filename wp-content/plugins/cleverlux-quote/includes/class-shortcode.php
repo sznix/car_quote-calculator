@@ -40,9 +40,13 @@ class Shortcode {
 	/**
 	 * Render shortcode.
 	 *
+	 * @param array $atts Shortcode attributes.
 	 * @return string
 	 */
-	public function render() {
+	public function render( $atts = array() ) {
+		// Sanitize attributes for security
+		$atts = shortcode_atts( array(), $atts, 'cleverlux_quote' );
+		
 		Assets::instance()->enqueue();
 		return '<div id="cleverlux-root" class="cleverlux-quote"></div>';
 	}
