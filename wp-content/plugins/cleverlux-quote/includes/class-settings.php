@@ -14,6 +14,7 @@ class Settings {
 	private function __construct() {
 		add_action( 'admin_menu', array( $this, 'register_menu' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 	}
 
 	public function register_menu() {
@@ -31,6 +32,19 @@ class Settings {
 		register_setting( 'cleverlux_q_settings', 'cleverlux_q_settings', array( $this, 'sanitize' ) );
 	}
 
+	public function enqueue_admin_assets( $hook ) {
+		if ( 'settings_page_cleverlux-quote' !== $hook ) {
+			return;
+		}
+		
+		wp_enqueue_style( 
+			'cleverlux-admin', 
+			plugin_dir_url( __FILE__ ) . '../assets/css/admin.css',
+			array(),
+			'1.0.0'
+		);
+	}
+
 	public function sanitize( $input ) {
 		if ( isset( $input['free_miles'] ) ) {
 			$input['free_miles'] = intval( $input['free_miles'] );
@@ -45,11 +59,22 @@ class Settings {
 	}
 
 	public function render_page() {
-		echo '<div class="wrap"><h1>CleverLux Quote</h1>';
-		echo '<form method="post" action="options.php">';
+		echo '<div class="wrap cleverlux-admin-page">';
+		echo '<h1 class="wp-heading-inline">CleverLux Quote Settings</h1>';
+		echo '<div class="admin-content">';
+		echo '<form method="post" action="options.php" class="cleverlux-settings-form">';
 		settings_fields( 'cleverlux_q_settings' );
-		submit_button();
-		echo '</form></div>';
+		echo '<div class="settings-section">';
+		echo '<h2>Quote Calculator Settings</h2>';
+		echo '<p class="description">Configure pricing and options for the quote calculator.</p>';
+		echo '</div>';
+		echo '<div class="submit-section">';
+		submit_button( 'Save Settings', 'primary', 'submit', false, array( 'aria-describedby' => 'save-help' ) );
+		echo '<p id="save-help" class="description">Press Enter or click to save your settings</p>';
+		echo '</div>';
+		echo '</form>';
+		echo '</div>';
+		echo '</div>';
 	}
 
 	public static function seed_defaults() {
