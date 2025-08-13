@@ -1,32 +1,48 @@
-steps:
-  - uses: actions/checkout@v4
+name: CI
 
-  # Only set up Node if there's a package.json
-  - uses: actions/setup-node@v4
-    if: ${{ hashFiles('package.json') != '' }}
-    with:
-      node-version: '20'
-      cache: 'npm'
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'codex/**'
 
-  # If we have a lockfile, use ci; otherwise install
-  - name: Install deps
-    if: ${{ hashFiles('package.json') != '' }}
-    run: |
-      if [ -f package-lock.json ]; then
-        npm ci
-      else
-        npm i
-      fi
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
 
-  - run: npm run lint --if-present
-    if: ${{ hashFiles('package.json') != '' }}
+      - uses: actions/setup-node@v4
+        if: ${{ hashFiles('package.json') != '' }}
+        with:
+          node-version: '20'
+          cache: npm
 
-  - run: npm run typecheck --if-present
-    if: ${{ hashFiles('package.json') != '' }}
+      - name: Install deps
+        if: ${{ hashFiles('package.json') != '' }}
+        shell: bash
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm i
+          fi
 
-  - run: npm test --if-present
-    if: ${{ hashFiles('package.json') != '' }}
+      - name: Lint
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm run lint --if-present
 
-  - run: npm run build --if-present
-    if: ${{ hashFiles('package.json') != '' }}
+      - name: Typecheck
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm run typecheck --if-present
+
+      - name: Test
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm test --if-present
+
+      - name: Build
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm run build --if-present
 
