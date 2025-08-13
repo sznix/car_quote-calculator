@@ -1,14 +1,32 @@
-name: ci
-on: [pull_request]
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - run: npm ci
-      - run: npm run lint --if-present
-      - run: npm run typecheck --if-present
-      - run: npm test --if-present
-      - run: npm run build --if-present
+steps:
+  - uses: actions/checkout@v4
+
+  # Only set up Node if there's a package.json
+  - uses: actions/setup-node@v4
+    if: ${{ hashFiles('package.json') != '' }}
+    with:
+      node-version: '20'
+      cache: 'npm'
+
+  # If we have a lockfile, use ci; otherwise install
+  - name: Install deps
+    if: ${{ hashFiles('package.json') != '' }}
+    run: |
+      if [ -f package-lock.json ]; then
+        npm ci
+      else
+        npm i
+      fi
+
+  - run: npm run lint --if-present
+    if: ${{ hashFiles('package.json') != '' }}
+
+  - run: npm run typecheck --if-present
+    if: ${{ hashFiles('package.json') != '' }}
+
+  - run: npm test --if-present
+    if: ${{ hashFiles('package.json') != '' }}
+
+  - run: npm run build --if-present
+    if: ${{ hashFiles('package.json') != '' }}
+
