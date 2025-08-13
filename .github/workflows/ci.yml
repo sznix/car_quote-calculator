@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - 'codex/**'
-      - 'cursor/**'   # ensure review branches run this exact workflow
+      - 'cursor/**'   # review branches
 
 jobs:
   build:
@@ -16,14 +16,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Set up Node (no cache; cache wants a lockfile)
+      # No cache (cache requires a lockfile)
       - name: Setup Node
         if: ${{ hashFiles('package.json') != '' }}
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # Always install with npm i to avoid lockfile errors on review branches
+      # Force npm i on review branches to avoid lockfile errors
       - name: Install deps
         if: ${{ hashFiles('package.json') != '' }}
         run: npm i
