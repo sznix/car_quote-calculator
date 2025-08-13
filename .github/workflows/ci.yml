@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - 'codex/**'
-      - 'cursor/**'   # so Cursor review branches run on push too
+      - 'cursor/**'   # run on Cursor review branches too
 
 jobs:
   build:
@@ -16,14 +16,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Only set up Node when a package.json exists (no cache to avoid lockfile errors)
+      # Setup Node only if repo has a package.json (no cache to avoid lockfile errors)
       - name: Setup Node
         if: ${{ hashFiles('package.json') != '' }}
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # If lockfile exists use npm ci; otherwise fall back to npm i
+      # If a lockfile exists use npm ci; else fall back to npm i
       - name: Install deps
         if: ${{ hashFiles('package.json') != '' }}
         shell: bash
