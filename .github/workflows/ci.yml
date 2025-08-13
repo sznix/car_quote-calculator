@@ -6,7 +6,7 @@ on:
     branches:
       - main
       - 'codex/**'
-      - 'cursor/**'   # run on Cursor review branches too
+      - 'cursor/**'   # ensure review branches run this exact workflow
 
 jobs:
   build:
@@ -16,23 +16,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Setup Node only if repo has a package.json (no cache to avoid lockfile errors)
+      # Set up Node (no cache; cache wants a lockfile)
       - name: Setup Node
         if: ${{ hashFiles('package.json') != '' }}
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # If a lockfile exists use npm ci; else fall back to npm i
+      # Always install with npm i to avoid lockfile errors on review branches
       - name: Install deps
         if: ${{ hashFiles('package.json') != '' }}
-        shell: bash
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm i
-          fi
+        run: npm i
 
       - name: Lint
         if: ${{ hashFiles('package.json') != '' }}
