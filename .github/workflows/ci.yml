@@ -1,14 +1,50 @@
 name: ci
-on: [pull_request]
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'codex/**'
+
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with: { node-version: '20' }
-      - run: npm ci
-      - run: npm run lint --if-present
-      - run: npm run typecheck --if-present
-      - run: npm test --if-present
-      - run: npm run build --if-present
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Set up Node only if there's a package.json (no caching — avoids lockfile error)
+      - name: Setup Node
+        if: ${{ hashFiles('package.json') != '' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # If a lockfile exists use npm ci; otherwise fall back to npm i
+      - name: Install deps
+        if: ${{ hashFiles('package.json') != '' }}
+        shell: bash
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm i
+          fi
+
+      - name: Lint
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm run lint --if-present
+
+      - name: Typecheck
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm run typecheck --if-present
+
+      - name: Test
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm test --if-present
+
+      - name: Build
+        if: ${{ hashFiles('package.json') != '' }}
+        run: npm run build --if-present
