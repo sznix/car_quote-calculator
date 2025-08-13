@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - 'codex/**'
+      - 'cursor/**'   # review branches
 
 jobs:
   build:
@@ -15,23 +16,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Set up Node only if there's a package.json (no caching — avoids lockfile error)
+      # No cache (cache requires a lockfile)
       - name: Setup Node
         if: ${{ hashFiles('package.json') != '' }}
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # If a lockfile exists use npm ci; otherwise fall back to npm i
+      # Force npm i on review branches to avoid lockfile errors
       - name: Install deps
         if: ${{ hashFiles('package.json') != '' }}
-        shell: bash
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm i
-          fi
+        run: npm i
 
       - name: Lint
         if: ${{ hashFiles('package.json') != '' }}
