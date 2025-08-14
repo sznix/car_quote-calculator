@@ -7,6 +7,10 @@ class Assets {
     }
 
     public function enqueue() : void {
+        if ( ! is_singular() ) {
+            return;
+        }
+
         $post = get_post();
         if ( ! $post || ! has_shortcode( $post->post_content, 'cleverlux_quote_calculator' ) ) {
             return;
