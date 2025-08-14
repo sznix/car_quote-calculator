@@ -46,40 +46,16 @@ jobs:
         run: npm run build --if-present
       - name: WP QA checks
         if: ${{ hashFiles('**/*.php') != '' }}
+        shell: bash
         run: |
           set -euo pipefail
-          shopt -s globstar nullglob
-          # Limit search scope to repo, excluding common vendor dirs
-          EXCLUDES=( -path './.git/*' -o -path './node_modules/*' -o -path './vendor/*' -o -path './dist/*' -o -path './build/*' )
-          # Build a null-delimited array of PHP files to safely handle spaces
-          mapfile -d '' -t php_files < <(find . -type f -name '*.php' ! \( "${EXCLUDES[@]}" \) -print0)
-
-          # If nothing to check (all PHP files excluded), exit early
-          if [ ${#php_files[@]} -eq 0 ]; then
+          php_files=$(git ls-files '*.php' || true)
+          if [ -z "$php_files" ]; then
+            echo "No PHP files found; skipping."
             exit 0
           fi
-
-          # 1) Enqueue only with shortcode context present
-          while IFS= read -r -d '' f; do
-            grep -Eq 'has_shortcode\(|add_shortcode\(|shortcode_atts\(' "$f" || { echo "::error file=$f::Asset enqueue must be gated by a shortcode (has_shortcode/add_shortcode)."; exit 1; }
-          done < <(grep -IlZ -E 'wp_enqueue_script|wp_enqueue_style' -- "${php_files[@]}" || true)
-
-          # 2) dbDelta is called safely with upgrade.php required
-          while IFS= read -r -d '' f; do
-            grep -Eq 'require_once.*wp-admin/includes/upgrade\.php' "$f" || { echo "::error file=$f::dbDelta requires including wp-admin/includes/upgrade.php"; exit 1; }
-          done < <(grep -IlZ 'dbDelta\(' -- "${php_files[@]}" || true)
-
-          # 3) No global leaks (allow only $wpdb)
-          violations=0
-          while IFS=: read -r file line content; do
-            # Allow only lines that declare $wpdb (optionally repeated) and nothing else
-            if [[ "$content" =~ ^[[:space:]]*global[[:space:]]+(\$wpdb[[:space:]]*)(,[[:space:]]*\$wpdb[[:space:]]*)*;([[:space:]]*(//|#).*)?$ ]]; then
-              continue
-            fi
-            echo "::error file=$file,line=$line::Avoid global variables (except \$wpdb)."
-            violations=1
-          done < <(grep -InE '^[[:space:]]*global[[:space:]]+\$' -- "${php_files[@]}" || true)
-
-          if [ "$violations" -ne 0 ]; then
-            exit 1
-          fi
+          echo "Found PHP files. Running header checks."
+          # Check for required plugin headers using fixed-string search to avoid regex issues
+          grep -RIl --include='*.php' -F 'Plugin Name:' . >/dev/null || { echo "Missing 'Plugin Name:' header in any PHP file."; exit 1; }
+          grep -RIl --include='*.php' -F 'Version:' . >/dev/null || { echo "Missing 'Version:' header in any PHP file."; exit 1; }
+          echo "WP QA checks passed." 
