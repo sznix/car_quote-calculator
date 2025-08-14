@@ -1,9 +1,0 @@
-{
-  "name": "car_quote-calculator",
-  "version": "1.0.0",
-  "scripts": {
-    "lint": "echo 'skip lint'",
-    "typecheck": "echo 'skip typecheck'",
-    "test": "node --test"
-  }
-}
