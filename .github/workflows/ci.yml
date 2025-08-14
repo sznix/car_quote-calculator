@@ -44,3 +44,27 @@ jobs:
       - name: Build
         if: ${{ hashFiles('package.json') != '' }}
         run: npm run build --if-present
+      - name: WP QA checks
+        if: ${{ hashFiles('**/*.php') != '' }}
+        run: |
+          set -euo pipefail
+          shopt -s globstar nullglob
+          # Limit search scope to repo, excluding common vendor dirs
+          EXCLUDES=( -path './.git/*' -o -path './node_modules/*' -o -path './vendor/*' -o -path './dist/*' -o -path './build/*' )
+          php_files=$(find . -type f -name '*.php' ! \( ${EXCLUDES[@]} \) -print)
+
+          # 1) Enqueue only with shortcode context present
+          enq_files=$(grep -IlE 'wp_enqueue_script|wp_enqueue_style' $php_files || true)
+          for f in $enq_files; do
+            grep -Eq 'has_shortcode\(|add_shortcode\(|shortcode_atts\(' "$f" || { echo "::error file=$f::Asset enqueue must be gated by a shortcode (has_shortcode/add_shortcode)."; exit 1; }
+          done
+
+          # 2) dbDelta is called safely with upgrade.php required
+          db_files=$(grep -Il 'dbDelta\(' $php_files || true)
+          for f in $db_files; do
+            grep -Eq 'require_once.*wp-admin/includes/upgrade\.php' "$f" || { echo "::error file=$f::dbDelta requires including wp-admin/includes/upgrade.php"; exit 1; }
+          done
+
+          # 3) No global leaks (allow only $wpdb)
+          bad_globals=$(grep -In '^[[:space:]]*global[[:space:]]+\$' $php_files | grep -vE '\$wpdb([[:space:],;)]|$)' || true)
+          [ -z "$bad_globals" ] || { echo "$bad_globals" | while IFS=: read -r file line _; do echo "::error file=$file,line=$line::Avoid global variables (except \$wpdb)."; done; exit 1; }
