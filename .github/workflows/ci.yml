@@ -44,3 +44,23 @@ jobs:
       - name: Build
         if: ${{ hashFiles('package.json') != '' }}
         run: npm run build --if-present
+      - name: WP QA checks
+        if: ${{ hashFiles('**/*.php') != '' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          php_files=$(git ls-files '*.php' || true)
+          if [ -z "$php_files" ]; then
+            echo "No PHP files found; skipping."
+            exit 0
+          fi
+          echo "Found PHP files. Running header checks."
+          if ! grep -RIl --include='*.php' -F 'Plugin Name:' . >/dev/null; then
+            echo "Missing 'Plugin Name:' header in any PHP file."
+            exit 1
+          fi
+          if ! grep -RIl --include='*.php' -F 'Version:' . >/dev/null; then
+            echo "Missing 'Version:' header in any PHP file."
+            exit 1
+          fi
+          echo "WP QA checks passed." 
