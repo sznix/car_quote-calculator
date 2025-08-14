@@ -16,18 +16,25 @@ class Assets {
             return;
         }
 
+        $css_path = CLEVERLUX_QUOTE_PLUGIN_PATH . 'assets/css/calculator.css';
+        $css_ver  = file_exists( $css_path ) ? (string) filemtime( $css_path ) : '0.1.0';
+
         wp_enqueue_style(
             'cleverlux-quote-calculator',
             CLEVERLUX_QUOTE_PLUGIN_URL . 'assets/css/calculator.css',
             [],
-            '0.1.0'
+            $css_ver
         );
+
+        $js_rel  = 'assets/build/calculator.js';
+        $js_path = CLEVERLUX_QUOTE_PLUGIN_PATH . $js_rel;
+        $js_ver  = file_exists( $js_path ) ? (string) filemtime( $js_path ) : '0.1.0';
 
         wp_enqueue_script(
             'cleverlux-quote-calculator',
-            CLEVERLUX_QUOTE_PLUGIN_URL . 'assets/js/calculator.js',
+            CLEVERLUX_QUOTE_PLUGIN_URL . $js_rel,
             [],
-            '0.1.0',
+            $js_ver,
             true
         );
     }

@@ -1,0 +1,13 @@
+{
+  "name": "cleverlux-car-quote-calculator",
+  "private": true,
+  "version": "0.1.0",
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "typecheck": "echo 'typecheck skipped'"
+  },
+  "devDependencies": {
+    "esbuild": "^0.21.5"
+  }
+}
