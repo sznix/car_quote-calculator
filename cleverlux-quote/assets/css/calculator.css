@@ -1,1 +1,45 @@
 /* Placeholder styles for CleverLux Quote Calculator */
+
+.cleverlux-quote-form { display: grid; gap: 12px; max-width: 560px; }
+
+.cleverlux-quote-form input[type="text"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color .15s ease, box-shadow .15s ease, background-color .15s ease;
+}
+
+.cleverlux-quote-form input[type="text"]::placeholder { color: #9ca3af; }
+
+.cleverlux-quote-form input[type="text"]:hover { border-color: #9ca3af; background-color: #fcfcfd; }
+
+.cleverlux-quote-form input[type="text"]:focus-visible {
+  outline: none;
+  border-color: #2684ff;
+  box-shadow: 0 0 0 3px rgba(38,132,255,.2);
+}
+
+.vehicle-size-tile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 8px 12px;
+  margin: 6px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: #fff;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color .15s ease, border-color .15s ease, box-shadow .15s ease, transform .02s ease;
+}
+
+.vehicle-size-tile:hover { background-color: #f8fafc; border-color: #d1d5db; }
+
+.vehicle-size-tile:active { transform: translateY(1px); }
+
+.vehicle-size-tile[aria-pressed="true"] { background-color: #e0e0e0; border-color: #cbd5e1; }
+
+.vehicle-size-tile:focus-visible { outline: 2px solid #2684ff; outline-offset: 2px; }
