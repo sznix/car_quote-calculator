@@ -49,17 +49,27 @@ function renderSizeStep({ onNext } = {}) {
     overlay.style.display = 'flex';
     overlay.style.alignItems = 'center';
     overlay.style.justifyContent = 'center';
+    overlay.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+      }
+    });
 
     const modal = document.createElement('div');
     modal.style.background = '#fff';
     modal.style.padding = '1rem';
     modal.style.borderRadius = '4px';
     modal.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-label', 'Vehicle model lookup');
     overlay.appendChild(modal);
 
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'Enter make and model';
+    input.setAttribute('aria-label', 'Vehicle make and model');
     modal.appendChild(input);
 
     const confirm = document.createElement('button');
@@ -105,6 +115,7 @@ function renderSizeStep({ onNext } = {}) {
     function close() {
       overlay.remove();
       highlightSuggestion(null);
+      unsureBtn.focus();
     }
   }
 
