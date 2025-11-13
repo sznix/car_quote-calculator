@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node esbuild.config.mjs",
     "typecheck": "echo 'typecheck skipped'",
-    "test": "node --test 'test/*.test.js'",
+    "test": "node --test test/SizeStep.test.js test/VehicleSizeTiles.test.js test/bootstrap.test.js test/useVehicleLookup.test.js test/vehicle-models.test.js",
     "test:coverage": "c8 --reporter=text --reporter=html --reporter=lcov npm test"
   },
   "devDependencies": {
